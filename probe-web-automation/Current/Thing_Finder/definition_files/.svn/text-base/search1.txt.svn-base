@@ -1,0 +1,6 @@
+search_type=text-file
+search_location=/tmp/find/
+search_location=/home
+search_term=WARNING: Received \d+ programs from source for lineup
+search_term=eight
+line_returned=3

@@ -1,0 +1,177 @@
+#!/usr/bin/perl
+# vim: set expandtab tabstop=4 shiftwidth=4 softtabstop=4 foldmethod=marker: #
+
+package Provisioning;
+use strict;
+use lib '/opt/probe-web-automation';
+use IQ;
+use Switch;
+
+# {{{ new
+sub new {
+	my $self  = {};
+
+    $self->{filename} = $_[1];
+	$self->{FILE} = undef;
+
+    $self->{ProbeList} = ();
+
+    $self->{User} = $_[2];
+    $self->{Password} = $_[3];
+
+    $self->{IQ} = undef;
+
+    bless($self); 
+    return $self;
+}
+# }}}
+sub open_file {
+
+	my $self = shift;
+
+	#open( $self->{FILE}, $self->{filename} ) || die("Could not open file!");
+
+    #$self->{FileLines} = $self->{FILE};
+}
+sub probe_list {
+# Probe list giving in a CSV format
+
+    my $self = shift;
+
+    my $list = $_[0];
+
+    $self->{ProbeList} = $list;
+    #$self->{ProbeList} = split( /,/, $list );
+
+}
+sub parse_file {
+
+	my $self = shift;
+
+    # Open File
+    open( FILE, $self->{filename} ) || die("Could not open file!");
+
+    my @file_content = <FILE>;
+
+    # Separate the probe's ip list
+    my @probe_list = split( /,/, $self->{ProbeList} );
+
+    foreach my $aProbe ( @probe_list ){
+
+print "Provisioning Probe: $aProbe - " . $self->{User} . " - " .  $self->{Password} . "\n";
+
+        # Start the IQ Probe automation object
+        $self->start_iq( $aProbe, $self->{User}, $self->{Password} );
+
+        # Save these for use with every run of the edit probe commands
+        my $alarm_type = '';
+        my $template_name = '';
+
+        foreach my $line ( @file_content ){
+
+            # Split by the equal sign
+            my @name_val = split( /=/, $line );
+
+            # Find alarm type to edit
+            if( $name_val[0] =~ /AlarmType/ ){
+                $alarm_type = $name_val[0];
+            }
+            # Find template name
+            elsif( $name_val[0] =~ /TemplateName/ ){
+                $template_name = $name_val[1];
+                $template_name =~ s/^\s*(\S*(?:\s+\S+)*)\s*$/$1/; # Trim leading and trailing spaces
+            }
+            # Run command
+            else {
+
+                $self->run_set_value( $template_name, $name_val[0], $name_val[1] );
+            }
+        }
+
+        # Reset the IQ object
+        $self->{IQ} = undef;
+    }
+}
+sub run_set_value {
+# Sets the value in the probe using the IQ.pm module
+
+	my $self = shift;
+
+    my $template_name = $_[0];
+    my $attrib_name = $_[1];
+    my $attrib_value = $_[2];
+
+#    print "$template_name  -  $attrib_name   -  $attrib_value   \n"; 
+
+    # Separate Attribute values: in the form of <enable switch> <new value>
+    my @attribe_value_split = split( /,/, $attrib_value );
+    my $enable_switch = $self->get_enable_switch_mapping( $attribe_value_split[0] );
+    my $new_value = $attribe_value_split[1];
+
+    # Get the real IQ function name associated with the config name which is shorter
+    my $iq_function_name = $self->get_run_iq_function_name( $attrib_name );
+
+    print $iq_function_name . "  function name\n";
+
+    if( $iq_function_name !~ /none/ ){
+
+        # Run the function that corespsonds to the IQ class mapped to the user config file
+        $self->{IQ}->$iq_function_name( $template_name, $enable_switch, $new_value ); 
+    }
+}
+sub get_enable_switch_mapping {
+# Returns the mapping of what the user puts in config file to turn the check box
+# on or off to the numerical value that the web automation get string wants 1 or 0.
+# Also if the value doesnt map to on or off, then this is probably one that has no
+# check box so just return the orig value
+
+    my $self = shift;
+
+    my $config_file_value = $_[0];  # on or off
+    my $web_enable_switch_value = $config_file_value;  # 1 = on, 0 = off
+
+    if( $config_file_value =~ /on/ ){
+        $web_enable_switch_value = 1;
+    } elsif ( $config_file_value =~ /off/ ){
+        $web_enable_switch_value = 0;
+    }
+
+    return $web_enable_switch_value;
+}
+sub get_run_iq_function_name {
+
+    my $self = shift;
+
+    my $function_name = $_[0];
+    my $iq_function_name = 'none';
+
+    switch( $function_name ){
+
+        case 'pmla_mdi-mlr' { $iq_function_name = 'pat_mdi_mlr_edit' }
+        case 'pmla_mlt-15' { $iq_function_name = 'pat_pmla_mlt15' }
+        case 'pmla_mls-lp' { $iq_function_name = 'pat_pmla_mls_lp' }
+        case 'pmla_mlt-24' { $iq_function_name = 'pat_pmla_mlt24' }
+        case 'pmla_mls-ld' { $iq_function_name = 'pat_pmla_mls_ld' }
+        case 'pmla_mls-24' { $iq_function_name = 'pat_pmla_mls24' }
+        case 'pmla_mls-15' { $iq_function_name = 'pat_pmla_mls15' }
+    }
+
+    return $iq_function_name;
+}
+sub start_iq {
+
+    my $self = shift;
+
+    my $probe_ip = $_[0];
+    my $username = $_[1];
+    my $password = $_[2];
+
+    $self->{IQ} = IQ->new();
+
+    $self->{IQ}->set_page_ip( $probe_ip );
+
+    $self->{IQ}->start_mech();
+
+    $self->{IQ}->login( $username, $password );
+}
+1;

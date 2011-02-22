@@ -1,0 +1,4 @@
+search_type=text-file
+search_location=/opt/ineoquest/plm/logs/
+search_term=WARNING: Received \d+ programs from source for lineup
+line_returned=3

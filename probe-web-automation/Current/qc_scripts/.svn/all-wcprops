@@ -1,0 +1,23 @@
+K 25
+svn:wc:ra_dav:version-url
+V 53
+/svn/ProCare/!svn/ver/159/trunk/Automation/qc_scripts
+END
+iVMS_Check.sh
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/svn/ProCare/!svn/ver/159/trunk/Automation/qc_scripts/iVMS_Check.sh
+END
+QC_Checklist_version_2.0d.xls
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/svn/ProCare/!svn/ver/159/trunk/Automation/qc_scripts/QC_Checklist_version_2.0d.xls
+END
+RH-Hdware.sh
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/svn/ProCare/!svn/ver/159/trunk/Automation/qc_scripts/RH-Hdware.sh
+END

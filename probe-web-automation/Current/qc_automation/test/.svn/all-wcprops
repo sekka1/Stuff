@@ -1,0 +1,77 @@
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/svn/ProCare/!svn/ver/159/trunk/Automation/qc_automation/test
+END
+section2_web_check_dashboard.pl
+K 25
+svn:wc:ra_dav:version-url
+V 93
+/svn/ProCare/!svn/ver/159/trunk/Automation/qc_automation/test/section2_web_check_dashboard.pl
+END
+test_expect.pl
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/svn/ProCare/!svn/ver/159/trunk/Automation/qc_automation/test/test_expect.pl
+END
+section3_web_check_dashboard.pl
+K 25
+svn:wc:ra_dav:version-url
+V 93
+/svn/ProCare/!svn/ver/159/trunk/Automation/qc_automation/test/section3_web_check_dashboard.pl
+END
+section4.pl
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/svn/ProCare/!svn/ver/159/trunk/Automation/qc_automation/test/section4.pl
+END
+section5.pl
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/svn/ProCare/!svn/ver/159/trunk/Automation/qc_automation/test/section5.pl
+END
+section6.pl
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/svn/ProCare/!svn/ver/159/trunk/Automation/qc_automation/test/section6.pl
+END
+sql.pl
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/svn/ProCare/!svn/ver/159/trunk/Automation/qc_automation/test/sql.pl
+END
+test1.pl
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/svn/ProCare/!svn/ver/159/trunk/Automation/qc_automation/test/test1.pl
+END
+section2_ssh.pl
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/svn/ProCare/!svn/ver/159/trunk/Automation/qc_automation/test/section2_ssh.pl
+END
+section2_web.pl
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/svn/ProCare/!svn/ver/159/trunk/Automation/qc_automation/test/section2_web.pl
+END
+ivms-login.pl
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/svn/ProCare/!svn/ver/159/trunk/Automation/qc_automation/test/ivms-login.pl
+END
+test_scp.pl
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/svn/ProCare/!svn/ver/159/trunk/Automation/qc_automation/test/test_scp.pl
+END

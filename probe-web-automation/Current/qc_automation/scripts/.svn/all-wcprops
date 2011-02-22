@@ -1,0 +1,53 @@
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/svn/ProCare/!svn/ver/159/trunk/Automation/qc_automation/scripts
+END
+section3_web_check_dashboard.pl
+K 25
+svn:wc:ra_dav:version-url
+V 96
+/svn/ProCare/!svn/ver/159/trunk/Automation/qc_automation/scripts/section3_web_check_dashboard.pl
+END
+section4.pl
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/svn/ProCare/!svn/ver/159/trunk/Automation/qc_automation/scripts/section4.pl
+END
+section5.pl
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/svn/ProCare/!svn/ver/159/trunk/Automation/qc_automation/scripts/section5.pl
+END
+section6.pl
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/svn/ProCare/!svn/ver/159/trunk/Automation/qc_automation/scripts/section6.pl
+END
+section1_ssh.pl
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/svn/ProCare/!svn/ver/159/trunk/Automation/qc_automation/scripts/section1_ssh.pl
+END
+section2_ssh.pl
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/svn/ProCare/!svn/ver/159/trunk/Automation/qc_automation/scripts/section2_ssh.pl
+END
+section2_web.pl
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/svn/ProCare/!svn/ver/159/trunk/Automation/qc_automation/scripts/section2_web.pl
+END
+run_one_sql.pl
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/svn/ProCare/!svn/ver/159/trunk/Automation/qc_automation/scripts/run_one_sql.pl
+END
