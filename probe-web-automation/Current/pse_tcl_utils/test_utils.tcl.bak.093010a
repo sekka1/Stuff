@@ -1,0 +1,369 @@
+package require iqtclapid
+source iq_utils.tcl
+
+proc single_circuit_test { circuit_name ip_test_port udp_port_start qos_bits total_bandwidth num_of_flows } {
+
+	#####################################
+	# Initialization
+	#####################################
+	set handle		-1
+	set stimHandle	-1
+	set isRunning	0
+	
+	set handle [ connectTo $ip_test_port ]
+	
+	openStimulus handle stimHandle
+
+	downloadStimulusFile handle stimHandle $qos_bits $udp_port_start
+
+	setXCount handle stimHandle
+
+	startStimulus handle stimHandle
+	
+	stopStimulus handle stimHandle
+	
+	closeStimulus handle stimHandle
+	
+	closeConnection handle stimHandle
+	
+}
+
+proc total_bandwidth_test { something } {
+
+}
+
+proc issue_marker_to_xPRT { marker_text } {
+
+
+}
+
+proc connectTo { target } {
+
+	#####################################
+	# Open Connection
+	#####################################
+	# Connect to the targets - catch the exception
+	
+	iqPrint "Connecting to "
+	iqPrint $target
+	iqPrint "..."
+	iqPrint "\n\n Gar-1: "
+	iqPrint $target
+	iqPrint "\n\n"
+	
+	if {[catch { set handle [iqtcl_ConnectTo $target] } result] } {
+		set status "Open Connection Failure to "
+		append status $target ": " $result
+		ErrorAndClose $status
+	}
+	
+	iqPrint "done\n"
+	
+	return $handle
+}
+proc openStimulus { up_handle up_stimHandle } {
+
+	upvar 1 $up_handle handle
+	upvar 1 $up_stimHandle stimHandle
+	
+	#####################################
+	# Open a Stimulus Session
+	#####################################
+	iqPrint "Opening Stimulus Session..."
+	
+	# Open Stimulus Session
+	if {[catch { set stimHandle [iqtcl_OpenStimulus $handle] } result] } {
+		set status "Open Stimulus Failure: "
+		append status $result
+		ErrorAndClose $status 
+	}
+	
+	iqPrint "done.\n"
+}
+proc downloadStimulusFile { up_handle up_stimHandle qos_bits udp_port_start } {
+
+	upvar 1 $up_handle handle
+	upvar 1 $up_stimHandle stimHandle
+	
+	#####################################
+	# Download the file to target
+	#####################################
+	set dataFile "/opt/ineoquest/gkan/a.ts"
+	
+	iqPrint "Downloading file "
+	iqPrint $dataFile
+	iqPrint "..."
+	
+	set srcMac [binary format H* 000AAAAAAAAA]
+	set destMac [binary format H* 000BBBBBBBBB]
+	
+	if {[catch { iqtcl_LoadDefaultFile $handle $stimHandle $srcMac $destMac 0 $qos_bits 192.168.10.1 192.168.10.3 $udp_port_start 600 0 0 } result] } {
+		set status "Download stimulus failure: "
+		append status $result
+		ErrorAndClose $status
+	}
+	
+	iqPrint "done\n"
+}
+
+proc setXCount { up_handle up_stimHandle } {
+
+	upvar 1 $up_handle handle
+	upvar 1 $up_stimHandle stimHandle
+	
+	#####################################
+	# Update the stream count
+	#####################################
+	
+	set numCopies 20
+	
+	iqPrint "Setting num copies to "
+	iqPrint $numCopies
+	iqPrint "..."
+	
+	if {[catch { iqtcl_SetXCount $handle $stimHandle $numCopies } result] } {
+		set status "Set XCount failure: "
+		append status $result;
+		ErrorAndClose $status
+	}
+	
+	iqPrint "done\n"
+}
+
+proc startStimulus { up_handle up_stimHandle } {
+
+	upvar 1 $up_handle handle
+	upvar 1 $up_stimHandle stimHandle
+
+	#####################################
+	# Start Stimulus Session
+	#####################################
+	iqPrint "Starting Stimulus..."
+	
+	# mod destIP
+	set modMask 64
+	set modValue 1
+	set	outPort 0
+	set numRecords 7
+	set numLoops 0
+	
+	if {[catch { iqtcl_StartStimulus $handle $stimHandle $modMask $modValue $outPort $numRecords $numLoops } result] } {
+		set status "Start stimulus failure: "
+		append status $result
+		ErrorAndClose $status
+	}
+	
+	iqPrint "done.\n"
+	set isRunning 1
+	
+	# Sleep for 10 seconds
+	iqPrint "\nSleeping 10 seconds...\n"
+	after 10000
+
+}
+proc stopStimulus { up_handle up_stimHandle } {
+
+	upvar 1 $up_handle handle
+	upvar 1 $up_stimHandle stimHandle
+	
+	#####################################
+	# Stop Stimulus Session
+	#####################################
+	iqPrint "Stopping Stimulus..."
+	
+	if {[catch { iqtcl_StopStimulus $handle $stimHandle } result] } {
+		set status "Stop stimulus failure: "
+		append status $result
+		ErrorAndClose $status
+	}
+	
+	iqPrint "done.\n"
+	set isRunning 0
+
+}
+
+proc closeStimulus { up_handle up_stimHandle } {
+
+	upvar 1 $up_handle handle
+	upvar 1 $up_stimHandle stimHandle
+	
+	#####################################
+	# Close Stimulus Session
+	#####################################
+	iqPrint "Closing Stimulus Session..."
+	
+	if {[catch { iqtcl_CloseStimulus $handle $stimHandle } result] } {
+		set status "Close Stimulus Failure: "
+		append status $result
+		ErrorAndClose $status
+	}
+	
+	iqPrint "done.\n"
+
+}
+proc closeConnection { up_handle up_stimHandle } {
+
+	upvar 1 $up_handle handle
+	upvar 1 $up_stimHandle stimHandle
+	
+	#####################################
+	# Close Connection
+	#####################################
+	iqPrint "Closing Connection..."
+	
+	if {[catch { iqtcl_CloseConnection $handle } result] } {
+		set status "Close Connection failure: "
+		append status $result
+		ErrorAndClose $status 
+	}
+	
+	iqPrint "done\n"
+
+}
+
+proc ErrorAndClose { status } {
+
+	global handle
+	global stimHandle
+	global isRunning
+
+	# print error
+	iqPrint "Error: "
+	iqPrint $status
+	iqPrint "\n"
+
+	if {$isRunning == 1} {
+		iqtcl_StopStimulus $handle $stimHandle
+	}
+
+	if {$stimHandle != -1} {
+		iqtcl_CloseStimulus $handle $stimHandle
+	}
+
+	if {$handle != -1} {
+		iqtcl_CloseConnection $handle
+	}
+
+	# get user ack
+	iqPrint "Hit <ENTER> to exit"
+	set answer [gets stdin]
+	exit
+}
+
+##########################################################################
+##########################################################################
+##########################################################################
+# Helper procedures used with the Tcl interface to the
+# Ineoquest SingulusG1 Systems
+#
+# public Procedures Defined:
+#		iqPrint
+#		ipaddr2hex
+#		hex2ipaddr
+#		hexnum
+#
+# private Procedures defined:
+##########################################################################
+
+#####################################################################
+# Procedure:
+#		iqPrint
+# Description:
+#		prints input to stdout and flushes buffer
+#
+# Parameters:
+#
+# Results:
+#
+####################################################################
+proc iqPrint { strData } {
+	puts -nonewline $strData
+	flush stdout
+}
+
+#####################################################################
+# Procedure: 
+#		ipaddr2hex
+# Description: 
+#		converts an IP dot-notation address to hex equivalent
+#
+# Parameters:
+#		addr		- the IP address in dot-notation 
+#
+# Returns:
+#		the hex equivalent
+#
+# NOTES:
+#
+#######################################################################
+proc ipaddr2hex {addr} {
+
+	# split the address
+	set ipbytes [split $addr "."]
+
+	# allow for truncated addresses
+    if {[llength $ipbytes] != 4} {
+        set ipbytes [lrange [concat $ipbytes 0 0 0] 0 3]
+    }
+
+	# validate the values
+	foreach i $ipbytes {
+		if {$i < 0 || $i > 255} {
+			return -code error "invalid address"
+		}
+	}
+
+	binary scan [binary format c4 $ipbytes] H8 x
+	return 0x$x
+}
+
+
+#####################################################################
+# Procedure: 
+#		hex2ipaddr
+# Description: 
+#		converts an hex IP address to its dot-notation equivalient
+#
+# Parameters:
+#		hexaddr		- the IP address in hex 
+#
+# Returns:
+#		the dot notation equivalent string
+#
+# NOTES:
+#
+#######################################################################
+proc hex2ipaddr { hexaddr } {
+
+	set ipString {}
+
+	set temp [binary format I [expr {$hexaddr}]]
+	binary scan $temp c4 octets
+
+	foreach octet $octets {
+		lappend ipString [expr {$octet & 0xFF}]
+	}
+
+	return [join $ipString .]
+ }
+
+#####################################################################
+# Procedure: 
+#		hexnum
+# Description: 
+#		returns a number based on the hex characters passed in
+#
+# Parameters:
+#		hexstring	- the hex characters 
+#
+# Returns:
+#		the hex number
+#
+# NOTES:
+#
+#######################################################################
+proc hexnum { hexstring } {
+	set hexval [format "%d" "0x$hexstring"]
+	return $hexval
+}
+

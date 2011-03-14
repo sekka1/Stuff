@@ -2083,6 +2083,20 @@ sub fg_remote_press_ok_button{
 	return "OK";
 }
 # }}}
+# {{{ fg_remote_change_channel
+sub fg_remote_change_channel{
+	
+	my $self = shift;
+    
+    my $channel = $_[0];
+	
+	my $url_string = '/dynamic/progguidechansel.html?stbChanId=' . $channel;
+	
+	$self->{mech}->get( "http://".$self->{PAGE_IP}.$url_string );
+
+	return "OK";
+}
+# }}}
 # {{{ fg_remote_press_pwr_button
 sub fg_remote_press_pwr_button{
 	
